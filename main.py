@@ -5,6 +5,7 @@ from typing import Optional, List
 from datetime import datetime
 import os
 import httpx
+import asyncio
 
 from supabase import create_client, Client
 
@@ -68,6 +69,26 @@ class WorkflowRun(BaseModel):
     matched:         int
     emailed:         int
     run_at:          Optional[str] = None
+
+
+# ── Self-ping keepalive (prevents Render free tier from sleeping) ──────────────
+async def _keepalive():
+    """Pings /health every 10 min so Render free tier never idles."""
+    await asyncio.sleep(60)
+    self_url = os.environ.get("RENDER_EXTERNAL_URL", "")
+    if not self_url:
+        return
+    async with httpx.AsyncClient() as client:
+        while True:
+            try:
+                await client.get(f"{self_url}/health", timeout=10)
+            except Exception:
+                pass
+            await asyncio.sleep(600)
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(_keepalive())
 
 # ── Health ─────────────────────────────────────────────────────────────────────
 @app.get("/")
