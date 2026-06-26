@@ -3,4 +3,5 @@ uvicorn[standard]==0.29.0
 supabase==2.4.3
 httpx==0.27.0
 python-dotenv==1.0.1
-pydantic==2.7.1
+pydantic==2.9.2
+pydantic-core==2.23.4
