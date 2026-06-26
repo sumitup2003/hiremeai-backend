@@ -1,0 +1,6 @@
+# Copy these into Railway → Variables tab
+# Never commit the real values to GitHub
+
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SERVICE_KEY=your-supabase-service-role-key
+GROQ_API_KEY=gsk_your_groq_key
